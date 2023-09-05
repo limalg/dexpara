@@ -1,0 +1,80 @@
+{% extends 'padrao.html' %}
+
+{% block body %}
+<!-- Adicione um título à página -->
+<h1 class="ui center aligned header">Detalhes das Funcionalidades</h1>
+
+<div class="ui grid">
+    <div class="eight wide column">
+        <!-- Adicione isso ao seu template HTML dentro do bloco body -->
+        <div id="grafico-pizza" style="width: 100%; height: 300px;"></div>
+    </div>
+    <div class="eight wide column">
+        <!-- Adicione isso ao seu template HTML dentro do bloco body -->
+        <div id="grafico-barras-canal" style="width: 100%; height: 300px;"></div>
+    </div>
+</div>
+
+<!-- Dentro do seu código JavaScript -->
+<script>
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(desenharGraficos);
+
+    function desenharGraficos() {
+        desenharGraficoTribo();
+        desenharGraficoCanal();
+    }
+
+    function desenharGraficoTribo() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Tribo');
+        data.addColumn('number', 'Quantidade');
+
+        // Substitua funcionalidades_tribo pelos dados que você passou do Python
+        var funcionalidadesTribo = {{ funcionalidades_tribo | tojson | safe }};
+
+        // Converte os dados do Python em um array que o Google Charts pode entender
+        var dados = [];
+        for (var tribo in funcionalidadesTribo) {
+            dados.push([tribo, funcionalidadesTribo[tribo]]);
+        }
+
+        data.addRows(dados);
+
+        var options = {
+            title: 'Quantidade de Funcionalidades por Tribo'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('grafico-pizza'));
+        chart.draw(data, options);
+    }
+    
+    function desenharGraficoCanal() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Canal');
+        data.addColumn('number','Quantidade');
+
+        // Substitua funcionalidades_canal pelos dados que você passou do Python
+        var funcionalidadesCanal = {{ funcionalidades_canal | tojson | safe }};
+
+        // Converte os dados do Python em um array que o Google Charts pode entender
+        var dados = [];
+        for (var canal in funcionalidadesCanal) {
+            dados.push([canal, funcionalidadesCanal[canal]]);
+        }
+
+        data.addRows(dados);
+
+        var options = {
+            title: 'Quantidade de Funcionalidades por Canal',
+            legend: 'none',
+            bars: 'horizontal' // Isso define o gráfico como um gráfico de barras horizontais
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById('grafico-barras-canal'));
+        chart.draw(data, options);
+    }
+
+
+</script>
+{% endblock %}

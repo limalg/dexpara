@@ -1,0 +1,30 @@
+{% extends 'padrao.html' %}
+
+{% block body %}
+<h1>Editar Canal</h1>
+
+<form method="POST">
+    <label for="tribo">Tribo:</label>
+    <select id="tribo" name="tribo" required>
+        <option value="Assistente Virtual" {% if canal.tribo == "Assistente Virtual" %}selected{% endif %}>Assistente Virtual</option>
+        <option value="Móvel" {% if canal.tribo == "Móvel" %}selected{% endif %}>Móvel</option>
+        <option value="Residencial" {% if canal.tribo == "Residencial" %}selected{% endif %}>Residencial</option>
+    </select><br><br>   
+
+    <label for="canal">Canal:</label>
+    <input type="text" id="canal" name="canal" value="{{ canal.canal }}" required><br><br>
+
+    <label for="subcanal">Subcanal:</label>
+    <input type="text" id="subcanal" name="subcanal" value="{{ canal.subcanal }}" required><br><br>
+    <!--
+    <label for="produto">Produto:</label>
+    <input type="text" id="produto" name="produto" value="{{ canal.produto }}" required><br><br>
+
+    <label for="categoria">Categoria:</label>
+    <input type="text" id="categoria" name="categoria" value="{{ canal.categoria }}" required><br><br>
+    -->    
+    <button type="submit">Salvar Alterações</button>
+</form>
+
+<a href="{{ url_for('cadastro_canais') }}">Voltar para Cadastro de Canais</a>
+{% endblock %}

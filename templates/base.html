@@ -1,0 +1,203 @@
+{% extends 'padrao.html' %}
+
+{% block body %}
+<h1 class="ui center aligned header">Cadastro de Funcionalidades</h1>
+
+<!-- Formulário para Adicionar Tarefa -->
+<form class="ui form" action="/add" method="post">
+    <div class="three fields">
+        <div class="field">
+            <label for="canal">Canal</label>
+            <select id="canal" name="canal" required>
+                <option value=""></option>
+                {% set unique_canais = [] %}
+                {% for info in info_canais %}
+                {% if info.canal not in unique_canais %}
+                <option value="{{ info.canal }}">{{ info.canal }}</option>
+                {% set _ = unique_canais.append(info.canal) %}
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label for="subcanal">Subcanal</label>
+            <select id="subcanal" name="subcanal" required >
+                <option value=""></option>
+            </select>
+        </div>                
+        <div class="field">
+            <label for="produto">Produto</label>
+            <select id="produto" name="produto" required>
+                <option value=""></option>
+                <option value="Perfil Não Identificado">Perfil Não Identificado</option>
+                <option value="BL Pós Pago">BL Pós Pago</option>
+                <option value="BL Pré Pago">BL Pré Pago</option>
+                <option value="Controle">Controle</option>
+                <option value="Controle Fácil">Controle Fácil</option>
+                <option value="Pós Pago">Pós Pago</option>
+                <option value="Pré Pago">Pré Pago</option>
+                <option value="TL Pós Pago">TL Pós Pago</option>
+            </select>  
+        </div>
+    </div>
+    <div class="two fields">
+        <div class="field">
+            <label for="categoria">Categoria</label>
+            <select id="categoria" name="categoria" required>
+                <option value=""></option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Base">Base</option>
+                <option value="Técnico">Técnico</option>
+                <option value="Outros">Outros</option>
+                <option value="Cadastro">Cadastro</option>
+            </select>                
+        </div>
+        <div class="field">
+            <label for="led_de_vendas">Led de Vendas</label>
+            <select id="led_de_vendas" name="led_de_vendas" required>
+                <option value=""></option>
+                <option value="Led de Vendas">Led de Vendas</option>
+                <option value="Outros">Outros</option>
+                <option value="PIX">PIX</option>
+                <option value="Técnica">Técnica</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="two fields">
+        <div class="field">
+            <label>Impacta Call Center</label>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="impacta_call_center" value="Sim">
+                    <label>Sim</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="impacta_call_center" value="Não">
+                    <label>Não</label>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label for="tag">Tag</label>
+            <select id="tag" name="tag" required>
+                <option value=""></option>
+                <option value="evento">Evento</option>
+                <option value="tracking_no">Tracking | Nó</option>
+                <option value="caminho_pagina">Caminho Pagina</option>
+            </select>
+        </div>
+    </div>
+    <div class="two fields">
+        <div class="field">
+            <label>Funcionalidade</label>
+            <input type="text" name="funcionalidade" placeholder="Funcionalidade">
+        </div>
+        <div class="field caminho_pagina" style="display: none">
+            <label>Caminho da Página</label>
+            <input type="text" name="caminho_pagina" placeholder="Caminho da Página">
+        </div>
+        <div class="field rotulo_evento" style="display: none">
+            <label>Rótulo de Evento</label>
+            <input type="text" name="rotulo_evento" placeholder="Rótulo de Evento">
+        </div>
+    </div>
+    <div class="two fields" >
+        <div class="field categoria_evento" style="display: none">
+            <label>Categoria de Evento</label>
+            <input type="text" name="categoria_evento" placeholder="Categoria de Evento">
+        </div>
+        <div class="field acao_evento" style="display: none">
+            <label>Ação de Evento</label>
+            <input type="text" name="acao_evento" placeholder="Ação de Evento">
+        </div>
+    </div>
+
+    <button class="ui blue button" type="submit">Adicionar</button>
+</form>
+
+
+<hr>
+
+{% for todo in todo_list %}
+<div class="ui segment " style="position: relative;">
+    <p class="ui big header ">Funcionalidade: {{ todo.funcionalidade }}  </p>
+    <p>
+        <ul>
+        <li><b>Subcanal:</b> {{ todo.subcanal }}</li>
+        <li><b> Led de Vendas:</b> {{ todo.led_de_vendas }}</li>
+        </ul>
+    </p>
+
+    
+    <a class="ui blue button" style="position: absolute; top: 5px; right: 5px;" href="/edit_base/{{ todo.id }}">Editar</a>
+    {% if current_user.is_admin %}
+    <a class="ui red button" style="position: absolute ; top: 5px; right: 90px;" href="/delete/{{ todo.id }}">Excluir</a>
+    {% endif %}
+    <p class="ui big header" style="position: absolute; bottom: 5px; right: 5px;">{{ todo.id }}</p>
+   
+</div>
+{% endfor %}
+
+
+<script>
+    $(document).ready(function () {
+        $("#canal").change(function () {
+            var selectedCanal = $(this).val();
+            var subcanalSelect = $("#subcanal");
+
+            subcanalSelect.empty();
+
+            // Preenche as opções do campo "Subcanal" com base na seleção do "Canal"
+            {% for info in info_canais %}
+                if ("{{ info.canal }}" === selectedCanal) {
+                    subcanalSelect.append($("<option></option>").attr("value", "{{ info.subcanal }}").text("{{ info.subcanal }}"));
+                }
+            {% endfor %}
+
+        });
+    });
+
+
+    
+// Adicione um evento de escuta de alteração ao campo "Tag"
+document.getElementById("tag").addEventListener("change", function () {
+    var selectedValue = this.value;
+    var categoria = document.querySelectorAll(".categoria_evento");
+    var acao = document.querySelectorAll(".acao_evento");
+    var rotulo = document.querySelectorAll(".rotulo_evento");
+    var pagina = document.querySelectorAll(".caminho_pagina");
+
+
+    if (selectedValue === "evento") {
+        // Se "evento" for selecionado, mostre os campos
+        categoria.forEach(function (element) { element.style.display = "block"; });
+        acao.forEach(function (element) { element.style.display = "block"; });
+        rotulo.forEach(function (element) { element.style.display = "block"; }); 
+        pagina.forEach(function (element) { element.style.display = "none"; });
+    }
+        
+    else if (selectedValue === "tracking_no") {
+        pagina.forEach(function (element) { element.style.display = "block"; });
+        categoria.forEach(function (element) { element.style.display = "none"; });
+        acao.forEach(function (element) { element.style.display = "none"; });
+        rotulo.forEach(function (element) { element.style.display = "none"; }); 
+        // Altere o título e o placeholder do campo "Caminho da Página" para "Tracking | Nó"
+        //document.querySelector("label[for='caminho_pagina']").textContent = "Tracking | Nó";
+        document.querySelector("input[name='caminho_pagina']").placeholder = "Tracking | Nó";
+    }
+    else {
+        pagina.forEach(function (element) { element.style.display = "block"; });
+        categoria.forEach(function (element) { element.style.display = "none"; });
+        acao.forEach(function (element) { element.style.display = "none"; });
+        rotulo.forEach(function (element) { element.style.display = "none"; });
+        document.querySelector("input[name='caminho_pagina']").placeholder = "Caminho Pagina"; 
+
+    }
+});
+
+
+</script>
+{% endblock %}

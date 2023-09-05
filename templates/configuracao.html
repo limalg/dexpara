@@ -1,0 +1,73 @@
+{% extends 'padrao.html' %}
+
+{% block body %}
+<h1 class="ui center aligned header">Configurações de Usuários</h1>
+
+<!-- Formulário para Adicionar/Editar Usuário -->
+<form class="ui form" action="/add_user" method="post">
+    <div class="fields">
+        <div class="eight wide field">
+            <label>Nome de Usuário</label>
+            <input type="text" name="username" placeholder="Nome de Usuário">
+        </div>
+        <div class="eight wide field">
+            <label>Senha</label>
+            <input type="password" name="password" placeholder="Senha">
+        </div>
+    </div>
+    <div class="fields">
+        <div class="eight wide field">
+            <label>Tribo</label>
+            <select name="tribo">
+                <option value=""></option>
+                <option value="Assistente Virtual">Assistente Virtual</option>
+                <option value="Móvel">Móvel</option>
+                <option value="Residencial">Residencial</option>
+            </select>
+        </div>                
+        <div class="eight wide field">
+            <label>E-mail</label>
+            <input type="text" name="email" placeholder="E-mail">
+        </div>
+    </div>
+    <div class="field">
+        <div class="ui checkbox">
+            <input type="checkbox" name="is_admin">
+            <label>Administrador</label>
+        </div>
+    </div>
+
+    <button class="ui blue button" type="submit">Adicionar Usuário</button>
+</form>
+
+<!-- Lista de Usuários -->
+<table class="ui celled table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome de Usuário</th>
+            <th>Tribo</th>
+            <th>E-mail</th>
+            <th>Ultimo Acesso</th>
+            <th>Administrador</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.tribo }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.ultimo_acesso }}</td>
+            <td>{% if user.is_admin %} Sim {% else %} Não {% endif %}</td>
+            <td>
+                <a class="ui blue button" href="/edit_user/{{ user.id }}">Editar</a>
+                <a class="ui red button" href="/delete_user/{{ user.id }}">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
