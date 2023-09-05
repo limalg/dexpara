@@ -422,9 +422,9 @@ def enviar_email(acao, subcanal,funcionalidade,regra):
 if __name__ == "__main__":
     with app.app_context():
         # Cria o primeiro usuário admin
-        admin_user = User(username='lima', password='123',tribo='', is_admin=True)
-        db.session.add(admin_user)
-        db.session.commit()
+        #admin_user = User(username='lima', password='123',tribo='', is_admin=True)
+        #db.session.add(admin_user)
+        #db.session.commit()
         db.create_all()
     #app.run(debug=True)
     app.run(debug=True)
