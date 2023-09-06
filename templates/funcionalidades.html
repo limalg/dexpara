@@ -1,0 +1,118 @@
+{% extends 'padrao.html' %}
+
+{% block body %}
+
+<div class="ui container" style="margin-top: 50px; overflow-x: hidden;">
+    <h1 class="ui center aligned header">Funcionalidades Pendentes de Aprovação</h1>
+
+    <div class="ui grid">
+        <!-- Coluna para o formulário de upload de Excel -->
+        <div class="eight wide column">
+            <p>Importar Excel das Funcionalidades</p>
+            <form method="POST" enctype="multipart/form-data" action="/importar_excel">
+                <div class="ui action input">
+                    <input type="file" name="file" accept=".xlsx">
+                    <button class="ui primary button" type="submit">Enviar</button>
+                </div>
+            </form>
+            {% if error %}
+            <p style="color: red;">{{ error }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Coluna para o formulário de comandos SQL -->
+        <div class="eight wide column">
+            <div>
+                <p>Executar Comandos SQL</p>
+                <form method="POST" action="/rodar_sql">
+                    <div class="ui action input">
+                        <input type="text" name="sql_command" placeholder="Insira o comando SQL">
+                        <button class="ui primary button" type="submit">Executar</button>
+                    </div>
+                </form>
+                {% if error %}
+                <p style="color: rgb(0, 4, 255);">{{ error }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Tabela para exibir as colunas da tabela "todo" -->
+    <div style="overflow-x: auto; margin-top: 20px">
+        <table class="ui celled table nowrap" id="funcionalidades-table" style="width:100%"> <!-- Adicione um ID à tabela -->
+            <thead>
+                <tr>
+                    <th>Ações</th>
+                    <th>ID</th>
+                    <th>Aprovado</th>
+                    <th>Tribo</th>
+                    <th>Canal</th>
+                    <th>Subcanal</th>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Led de Vendas</th>
+                    <th>Impacta Call Center</th>
+                    <th>Tag</th>
+                    <th>Funcionalidade</th>
+                    <th>Caminho Pagina</th>
+                    <th>Categoria Evento</th>
+                    <th>Ação Evento</th>
+                    <th>Rótulo Evento</th>
+                    <th>DT Atualização</th>
+                    <th>DT Criação</th>
+                    <th>E-mail</th>
+                    
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for todo in todo_list %}
+                <tr>
+                    <td>
+                        <a href="/edit_base/{{ todo.id }}"><i class="edit icon"></i></a>
+                        {% if current_user.is_admin %}
+                        <a href="/alterar_aprovacao/{{ todo.id }}"><i class="check circle outline icon"></i></a>
+                        <a href="/delete/{{ todo.id }}"><i class="trash alternate outline icon"></i></a>
+                        {% endif %}
+                    </td>
+                                       
+                    <td>{{ todo.id }}</td>
+                    <td>{{ todo.aprovado }}</td>
+                    <td>{{ todo.tribo }}</td>
+                    <td>{{ todo.canal }}</td>
+                    <td>{{ todo.subcanal }}</td>
+                    <td>{{ todo.produto }}</td>
+                    <td>{{ todo.categoria }}</td>
+                    <td>{{ todo.led_de_vendas }}</td>
+                    <td>{{ todo.impacta_call_center }}</td>
+                    <td>{{ todo.tag }}</td>
+                    <td>{{ todo.funcionalidade }}</td>
+                    <td>{{ todo.caminho_pagina }}</td>
+                    <td>{{ todo.categoria_evento }}</td>
+                    <td>{{ todo.acao_evento }}</td>
+                    <td>{{ todo.rotulo_evento }}</td>
+                    <td>{{ todo.data_atualizacao|formatar_data }}</td>
+                    <td>{{ todo.data_criacao|formatar_data }}</td>
+                    <td>{{ todo.email }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#funcionalidades-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "scrollX": true,
+
+        });
+    });
+
+</script>
+    
+{% endblock %}
