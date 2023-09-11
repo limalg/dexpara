@@ -411,11 +411,18 @@ def importar_excel():
             # Verifique se o arquivo tem um nome e é um arquivo Excel
             if file.filename == "" or not file.filename.endswith(".xlsx"):
                 return render_template("funcionalidades.html", error= "Arquivo inválido. Envie um arquivo Excel (.xlsx).") 
+            workbook = openpyxl.load_workbook(file)
+            sheet = workbook.active
             
-
+            # Criar um DataFrame a partir das linhas do arquivo xlsx
+            data = []
+            
+            for row in sheet.iter_rows(values_only=True):
+                data.append(row)
+            
             try:
                 db_filename = 'instance/db.sqlite' 
-                df = pd.read_excel(file)
+                df = pd.read_excel(data, columns=sheet[1])
                 conn = sqlite3.connect(db_filename)
                 cursor = conn.cursor()
 
