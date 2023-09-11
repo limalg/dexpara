@@ -416,9 +416,9 @@ def importar_excel():
         if file.filename == "":
             return render_template("funcionalidades.html", error="Nenhum arquivo selecionado")
 
-        # Verifique se o arquivo é um arquivo Excel (.xlsx)
-        if not file.filename.endswith(".xlsx"):
-            return render_template("funcionalidades.html", error="Arquivo inválido. Envie um arquivo Excel (.xlsx).")
+        # Verifique se o arquivo é um arquivo Excel (.csv)
+        if not file.filename.endswith(".csv"):
+            return render_template("funcionalidades.html", error="Arquivo inválido. Envie um arquivo Excel (.csv).")
 
         # Use o nome de arquivo seguro para evitar problemas com caracteres especiais
         filename = secure_filename(file.filename)
@@ -433,7 +433,7 @@ def importar_excel():
             cursor = conn.cursor()
 
             # Leia o arquivo Excel diretamente usando o pandas
-            df = pd.read_excel(file_path)
+            df = pd.read_csv(file_path)
 
             for _, row in df.iterrows():
                 data_atualizacao = datetime.utcnow()
