@@ -433,8 +433,8 @@ def importar_excel():
             cursor = conn.cursor()
 
             # Leia o arquivo Excel diretamente usando o pandas
-            df = pd.read_csv(file_path)
-            print(df)
+            df = pd.read_csv(file_path,sep=';')
+            #print(df)
 
             for _, row in df.iterrows():
                 data_atualizacao = datetime.utcnow()
