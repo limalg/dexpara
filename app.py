@@ -483,7 +483,7 @@ def rodar_sql():
         sql_command = request.form.get('sql_command')  # Obtenha o comando SQL do formulário
 
         try:
-            db_filename = 'instance/db.sqlite' 
+            db_filename = 'db.sqlite' 
             conn = sqlite3.connect(db_filename)
             cursor = conn.cursor()
             cursor.execute(sql_command)
