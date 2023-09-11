@@ -423,7 +423,7 @@ def importar_excel():
             
             try:
                 db_filename = 'instance/db.sqlite' 
-                print(df)
+                print(sheet[1])
                 df = pd.read_excel(data, columns=sheet[1])
                 conn = sqlite3.connect(db_filename)
                 cursor = conn.cursor()
