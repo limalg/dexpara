@@ -400,71 +400,86 @@ def exportar_csv():
         headers={"Content-disposition": "attachment; filename=exportar_funcionalidades.csv"}
     )
 
+import os
+from werkzeug.utils import secure_filename  # Importe esta biblioteca para lidar com nomes de arquivo seguros
+
+# ...
+
 @app.route("/importar_excel", methods=["GET", "POST"])
 @login_required
 def importar_excel():
     error = None
     if request.method == "POST":
-            # Verifique se o formulário contém um arquivo
-            if "file" not in request.files:
-                return render_template("funcionalidades.html", error= "Nenhum arquivo enviado")
-            file = request.files["file"]
-            # Verifique se o arquivo tem um nome e é um arquivo Excel
-            if file.filename == "" or not file.filename.endswith(".xlsx"):
-                return render_template("funcionalidades.html", error= "Arquivo inválido. Envie um arquivo Excel (.xlsx).") 
-            
-            try:
-                db_filename = 'instance/db.sqlite' 
-                conn = sqlite3.connect(db_filename)
-                cursor = conn.cursor()
-                
-                # Criar um DataFrame a partir das linhas do arquivo xlsx
-                workbook = openpyxl.load_workbook(file)
-                sheet = workbook.active
-                data = []
-                for row in sheet.iter_rows(values_only=True):
-                    data.append(row)
-                df = pd.DataFrame(data[1:], columns=[col[0] for col in data[0]])
+        # Verifique se o formulário contém um arquivo
+        if "file" not in request.files:
+            return render_template("funcionalidades.html", error="Nenhum arquivo enviado")
 
-                for _, row in df.iterrows():
-                    data_atualizacao = datetime.utcnow()
-                    data_criacao = datetime.utcnow()
-                    marcacao = f"{str(row['Categoria Evento'])}{str(row['Ação Evento'])}{str(row['Rotulo Evento'])}{str(row['Caminho Pagina'])}".upper()
-                    categoria_evento = str(row['Categoria Evento'])
-                    acao_evento = str(row['Ação Evento'])
-                    rotulo_evento = str(row['Rotulo Evento'])
-                    caminho_pagina = str(row['Caminho Pagina'])
-                    funcionalidade = str(row['Funcionalidade'])
-                    canal = str(row['Canal'])
-                    subcanal = str(row['Subcanal'])
-                    produto = str(row['Produto'])
-                    categoria = str(row['Categoria'])
-                    impacta_call_center = str(row['Impacta Call Center'])
-                    tribo = str(row['Tribo'])
-                    tag = str(row['Tag'])
-                    email = str(row['e-mail'])
-                    led_de_vendas = str(row['Led de Vendas'])
-                    aprovado = True  # Você pode ajustar esse valor conforme necessário
-                    sql = '''
-                    INSERT INTO todo (data_atualizacao, data_criacao, marcacao, categoria_evento, acao_evento, rotulo_evento, caminho_pagina, funcionalidade, canal, subcanal, produto, categoria, impacta_call_center, tribo, tag, email, led_de_vendas, aprovado)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    '''
-                    # Execute o comando SQL com os dados fornecidos
-                    cursor.execute(sql, (
-                        data_atualizacao, data_criacao, marcacao, categoria_evento, acao_evento, rotulo_evento, caminho_pagina,
-                        funcionalidade, canal, subcanal, produto, categoria, impacta_call_center, tribo, tag, email, led_de_vendas,
-                        aprovado     
-                    ))
-                conn.commit()  
-                return render_template("funcionalidades.html", error= "Importação concluída com sucesso!")
-   
-            except sqlite3.Error as e:
-                # Em caso de erro, faça rollback das alterações
-                conn.rollback()
-                return render_template("funcionalidades.html", error= ("Ocorreu um erro:", e))
+        file = request.files["file"]
 
-            finally:
-                conn.close()    
+        # Verifique se o arquivo tem um nome
+        if file.filename == "":
+            return render_template("funcionalidades.html", error="Nenhum arquivo selecionado")
+
+        # Verifique se o arquivo é um arquivo Excel (.xlsx)
+        if not file.filename.endswith(".xlsx"):
+            return render_template("funcionalidades.html", error="Arquivo inválido. Envie um arquivo Excel (.xlsx).")
+
+        # Use o nome de arquivo seguro para evitar problemas com caracteres especiais
+        filename = secure_filename(file.filename)
+
+        # Salve o arquivo no sistema de arquivos temporários
+        file_path = os.path.join("temp", filename)
+        file.save(file_path)
+
+        try:
+            db_filename = 'instance/db.sqlite'
+            conn = sqlite3.connect(db_filename)
+            cursor = conn.cursor()
+
+            # Leia o arquivo Excel diretamente usando o pandas
+            df = pd.read_excel(file_path)
+
+            for _, row in df.iterrows():
+                data_atualizacao = datetime.utcnow()
+                data_criacao = datetime.utcnow()
+                marcacao = f"{str(row['Categoria Evento'])}{str(row['Ação Evento'])}{str(row['Rotulo Evento'])}{str(row['Caminho Pagina'])}".upper()
+                categoria_evento = str(row['Categoria Evento'])
+                acao_evento = str(row['Ação Evento'])
+                rotulo_evento = str(row['Rotulo Evento'])
+                caminho_pagina = str(row['Caminho Pagina'])
+                funcionalidade = str(row['Funcionalidade'])
+                canal = str(row['Canal'])
+                subcanal = str(row['Subcanal'])
+                produto = str(row['Produto'])
+                categoria = str(row['Categoria'])
+                impacta_call_center = str(row['Impacta Call Center'])
+                tribo = str(row['Tribo'])
+                tag = str(row['Tag'])
+                email = str(row['e-mail'])
+                led_de_vendas = str(row['Led de Vendas'])
+                aprovado = True  # Você pode ajustar esse valor conforme necessário
+                sql = '''
+                INSERT INTO todo (data_atualizacao, data_criacao, marcacao, categoria_evento, acao_evento, rotulo_evento, caminho_pagina, funcionalidade, canal, subcanal, produto, categoria, impacta_call_center, tribo, tag, email, led_de_vendas, aprovado)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                '''
+                # Execute o comando SQL com os dados fornecidos
+                cursor.execute(sql, (
+                    data_atualizacao, data_criacao, marcacao, categoria_evento, acao_evento, rotulo_evento, caminho_pagina,
+                    funcionalidade, canal, subcanal, produto, categoria, impacta_call_center, tribo, tag, email, led_de_vendas,
+                    aprovado
+                ))
+            conn.commit()
+            return render_template("funcionalidades.html", error="Importação concluída com sucesso!")
+
+        except sqlite3.Error as e:
+            # Em caso de erro, faça rollback das alterações
+            conn.rollback()
+            return render_template("funcionalidades.html", error=("Ocorreu um erro:", e))
+
+        finally:
+            # Remova o arquivo temporário após o uso
+            os.remove(file_path)
+            conn.close()
 
 # Rota para rodar comandos SQL
 @app.route("/rodar_sql", methods=['GET', 'POST'])
