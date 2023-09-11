@@ -437,16 +437,12 @@ def importar_excel():
             #print(df)
 
             for _, row in df.iterrows():
-                id = db.Column(db.Integer, primary_key=True)
-                user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-                data_atualizacao = datetime.utcnow()
-                data_criacao = datetime.utcnow()
                 marcacao = f"{str(row['Categoria Evento'])}{str(row['Ação Evento'])}{str(row['Rotulo Evento'])}{str(row['Caminho Pagina'])}".upper()
                 categoria_evento = str(row['Categoria Evento'])
                 acao_evento = str(row['Ação Evento'])
                 rotulo_evento = str(row['Rotulo Evento'])
                 caminho_pagina = str(row['Caminho Pagina'])
-                funcionalidade = str(row['Funcionalidade'])
+                funcionalidade = str(row['Funcionalidade']).title().replace("-", "").replace("_", "").replace("'", "").replace(".", "")
                 canal = str(row['Canal'])
                 subcanal = str(row['Subcanal'])
                 produto = str(row['Produto'])
@@ -454,19 +450,17 @@ def importar_excel():
                 impacta_call_center = str(row['Impacta Call Center'])
                 tribo = str(row['Tribo'])
                 tag = str(row['Tag'])
-                email = str(row['e-mail'])
                 led_de_vendas = str(row['Led de Vendas'])
                 aprovado = True  # Você pode ajustar esse valor conforme necessário
-                sql = '''
-                INSERT INTO todo (id,user_id,data_atualizacao, data_criacao, marcacao, categoria_evento, acao_evento, rotulo_evento, caminho_pagina, funcionalidade, canal, subcanal, produto, categoria, impacta_call_center, tribo, tag, email, led_de_vendas, aprovado)
-                VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                '''
-                # Execute o comando SQL com os dados fornecidos
-                cursor.execute(sql, (
-                    data_atualizacao, data_criacao, marcacao, categoria_evento, acao_evento, rotulo_evento, caminho_pagina,
-                    funcionalidade, canal, subcanal, produto, categoria, impacta_call_center, tribo, tag, email, led_de_vendas,
-                    aprovado
-                ))
+                
+                # Crie um novo objeto Todo com os dados do formulário
+                new_todo = Todo(user_id=current_user.id, data_criacao=datetime.utcnow(), marcacao=marcacao,
+                                categoria_evento=categoria_evento, acao_evento=acao_evento, rotulo_evento=rotulo_evento,
+                                caminho_pagina=caminho_pagina, funcionalidade=funcionalidade, canal=canal, subcanal=subcanal,
+                                produto=produto, categoria=categoria, impacta_call_center=impacta_call_center,
+                                tribo=tribo, tag=tag, led_de_vendas=led_de_vendas,email=current_user.email,aprovado=aprovado)
+            
+                db.session.add(new_todo)
             conn.commit()
             return render_template("funcionalidades.html", error="Importação concluída com sucesso!")
 
