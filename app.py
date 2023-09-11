@@ -428,7 +428,7 @@ def importar_excel():
         file.save(file_path)
 
         try:
-            db_filename = 'instance/db.sqlite'
+            db_filename = 'db.sqlite'
             conn = sqlite3.connect(db_filename)
             cursor = conn.cursor()
 
