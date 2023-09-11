@@ -437,6 +437,8 @@ def importar_excel():
             #print(df)
 
             for _, row in df.iterrows():
+                id = db.Column(db.Integer, primary_key=True)
+                user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
                 data_atualizacao = datetime.utcnow()
                 data_criacao = datetime.utcnow()
                 marcacao = f"{str(row['Categoria Evento'])}{str(row['Ação Evento'])}{str(row['Rotulo Evento'])}{str(row['Caminho Pagina'])}".upper()
@@ -456,8 +458,8 @@ def importar_excel():
                 led_de_vendas = str(row['Led de Vendas'])
                 aprovado = True  # Você pode ajustar esse valor conforme necessário
                 sql = '''
-                INSERT INTO todo (data_atualizacao, data_criacao, marcacao, categoria_evento, acao_evento, rotulo_evento, caminho_pagina, funcionalidade, canal, subcanal, produto, categoria, impacta_call_center, tribo, tag, email, led_de_vendas, aprovado)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO todo (id,user_id,data_atualizacao, data_criacao, marcacao, categoria_evento, acao_evento, rotulo_evento, caminho_pagina, funcionalidade, canal, subcanal, produto, categoria, impacta_call_center, tribo, tag, email, led_de_vendas, aprovado)
+                VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 '''
                 # Execute o comando SQL com os dados fornecidos
                 cursor.execute(sql, (
