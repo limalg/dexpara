@@ -461,8 +461,7 @@ def importar_excel():
                                 tribo=tribo, tag=tag, led_de_vendas=led_de_vendas,email=current_user.email,aprovado=aprovado)
             
                 db.session.add(new_todo)
-                print(new_todo)
-            conn.commit()
+                conn.commit()
             return render_template("funcionalidades.html", error="Importação concluída com sucesso!")
 
         except sqlite3.Error as e:
