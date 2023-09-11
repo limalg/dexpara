@@ -517,8 +517,8 @@ if __name__ == "__main__":
     with app.app_context():
         # Cria o primeiro usuário admin
         db.create_all()
-        #admin_user = User(username='lima', password='123',tribo='', is_admin=True)
-        #db.session.add(admin_user)
-        #db.session.commit()
+        admin_user = User(username='lima', password='123',tribo='', is_admin=True)
+        db.session.add(admin_user)
+        db.session.commit()
         
     app.run(host="0.0.0.0")
