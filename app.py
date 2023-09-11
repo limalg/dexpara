@@ -13,6 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from collections import Counter
 import os
 import openpyxl
+from werkzeug.utils import secure_filename  # Importe esta biblioteca para lidar com nomes de arquivo seguros
 
 
 app = Flask(__name__)
@@ -399,11 +400,6 @@ def exportar_csv():
         mimetype="text/csv",
         headers={"Content-disposition": "attachment; filename=exportar_funcionalidades.csv"}
     )
-
-import os
-from werkzeug.utils import secure_filename  # Importe esta biblioteca para lidar com nomes de arquivo seguros
-
-# ...
 
 @app.route("/importar_excel", methods=["GET", "POST"])
 @login_required
