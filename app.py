@@ -434,6 +434,7 @@ def importar_excel():
 
             # Leia o arquivo Excel diretamente usando o pandas
             df = pd.read_csv(file_path)
+            print(df.columns)
 
             for _, row in df.iterrows():
                 data_atualizacao = datetime.utcnow()
